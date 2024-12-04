@@ -2,6 +2,7 @@
 
 This is the repository of the sequence matching tool.
 
+![home](https://github.com/kesler20/sequence_matching/blob/master/sequence%20matching%20image.png)
 
 # Getting Started
 Follow the instruction guide at [seqMGuide](https://scribehow.com/shared/How_To_Submit_Data_and_Download_Results__gC83MR_rSq2MSATGuP2zkA)
