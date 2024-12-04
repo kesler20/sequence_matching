@@ -1,46 +1,41 @@
-# Getting Started with Create React App
+# Sequence Matching
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the repository of the sequence matching tool.
 
-## Available Scripts
 
-In the project directory, you can run:
+# Getting Started
+Follow the instruction guide at [seqMGuide](https://scribehow.com/shared/How_To_Submit_Data_and_Download_Results__gC83MR_rSq2MSATGuP2zkA)
 
-### `npm start`
+or [SDIGuide](https://github.com/kesler20/sequence_matching/blob/master/supporting_information/HowToSubmitDataandDownloadResults_PDF_2024-12-04080111.357514.pdf)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+# Installation
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Python code
+For installing running the python code create a virtual environment on powershell
+```bash
+python -m venv wiz-app-env
+```
+and activate it
+```bash
+wiz-app-env/scripts/activate.ps1
+```
+install all the requirements
 
-### `npm test`
+```bash
+pip install -r requirements.txt
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+install the module in edit mode
+```bash
+pip install -e .
+```
 
-### `npm run build`
+### Frontend
+For the frontend, run
+```bash
+npm install
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## TODOs
+- [ ] complete installation instruction
+- [ ] provide the .gist with the credentials
