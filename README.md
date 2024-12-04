@@ -9,6 +9,14 @@ Follow the instruction guide at [seqMGuide](https://scribehow.com/shared/How_To_
 
 or [SDIGuide](https://github.com/kesler20/sequence_matching/blob/master/supporting_information/HowToSubmitDataandDownloadResults_PDF_2024-12-04080111.357514.pdf)
 
+> **Note**: Make sure that you have one of the BiopharmaFinder versions below
+
+| Version | Release Date | Change Log                                                                                      | Validated | Reference                                                                                                     |
+|---------|--------------|------------------------------------------------------------------------------------------------|-----------|---------------------------------------------------------------------------------------------------------------|
+| 5.0     | 2023         | Workflow-driven experiment creation, method processing, and result review                      | ✅       | [Release Notes](https://assets.thermofisher.com/TFS-Assets/CMD/manuals/man-xcali-98421-biopharma-finder-50-release-manxcali98421-en.pdf) |
+| 5.3     | 2024         | Enhanced peptide mapping, oligonucleotide analysis, intact protein analysis, top-down analysis | ❌       | [Product Page](https://www.thermofisher.com/order/catalog/product/B51001849)                                 |
+
+
 # Installation
 
 ### Python code
