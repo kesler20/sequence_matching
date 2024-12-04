@@ -1,0 +1,55 @@
+.upload-page__body {
+  font-family: "Montserrat", sans-serif;
+  color: var(--txt-color);
+  font-weight: 400;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  height: 100%;
+  /* padding-top: 100px; */
+}
+
+.upload-page__body__box {
+  background-color: var(--box-bg);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: var(--box-shadow);
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color),
+    0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.upload-page__body__box__header {
+  margin-bottom: 30px;
+  text-align: center;
+  color: var(--txt-second-color);
+}
+
+.upload-page {
+  --body-bg: #f5f8ff;
+  --box-bg: var(--primary-color);
+  --input-bg: var(--fourth-color);
+  --txt-color: var(--tertiary-color);
+  --txt-second-color: var(--tertiary-color);
+}
+
+.dark .upload-page {
+  --body-bg: #20232a;
+  --box-bg: #33373E;
+  --input-bg: #f5f8ff;
+  --txt-color: #2f2d2f;
+  --txt-second-color: #ccc;
+  --border-color: #4267b2;
+  --box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.box {
+  background-color: var(--box-bg);
+  padding: 30px;
+  border-radius: 0px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}

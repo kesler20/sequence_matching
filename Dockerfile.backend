@@ -1,0 +1,32 @@
+# Use the official Python base image
+FROM python:3.9-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the application files to the container
+COPY . /app
+
+# Install libGL.so.1 required system packages for cv2 to work
+RUN apt-get update && apt-get install -y libgl1-mesa-glx
+
+# Install libglib2.0-0 required system packages for cv2 to work
+RUN apt-get update && apt-get install -y libglib2.0-0
+
+# Add git to the container
+RUN apt-get update && apt-get install -y git
+
+# Install the application and dependencies
+RUN pip install -r requirements.txt
+
+# Install the application and dependencies
+RUN pip install -e .
+
+# Expose the port that the application will listen on
+EXPOSE 8000
+
+# Set environment variables for production
+ENV PYTHONPATH=/app
+
+# Start the application using uvicorn with gunicorn as the worker
+CMD ["gunicorn", "wiz_app_backend.app:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000"]

@@ -1,0 +1,175 @@
+:root {
+  /* darker (navbar and sidebar color) */
+  --primary-color: rgb(17, 24, 39);
+  /* lighter (background color) */
+  --secondary-color: rgb(22, 29, 51);
+  /* gray text color */
+  --text-color: rgb(146, 147, 152);
+  /* sidebar menu items color */
+  --fourth-color: rgb(31, 41, 55);
+  /* lighter (sidebar hover color) */
+  --tertiary-color: rgb(123, 199, 253);
+  --border: 1px solid #474a4d;
+  --border-radius: 8px;
+  --navbarHeight: 16px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  text-decoration: none;
+}
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+/* Example for custom notification style */
+.custom-toast-success {
+  background-color: green;
+  color: white;
+}
+.custom-toast-info {
+  background-color: yellow;
+  color: white;
+}
+.custom-toast-warning {
+  background-color: orange;
+  color: white;
+}
+.custom-toast-error {
+  background-color: red;
+  color: white;
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.5) rgba(0, 0, 0, 0.1);
+}
+
+/* For Webkit browsers */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; /* Adjust width for vertical scrollbars */
+  height: 8px; /* Adjust height for horizontal scrollbars */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1); /* Color of the track */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.5); /* Color of the thumb */
+  border-radius: 4px; /* Radius for the thumb */
+  border: 2px solid transparent; /* Force a scrollbar thumb */
+  background-clip: content-box; /* Don't let the background bleed outside the thumb */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.7); /* Color of the thumb when hovering */
+}
+
+/* here you can specify custom utility classes*/
+@layer components {
+  /* ================== COLORS ================= */
+  /* -----------border colors ------------------ */
+  .border-default-color {
+    @apply border-gray-700;
+  }
+
+  /* ---------- Color pallette for text ------- */
+  /* gray text color */
+  .text-default {
+    @apply text-[rgb(146,147,152)];
+  }
+  /* darker (navbar and sidebar color) */
+  .text-primary {
+    @apply text-[rgb(17,24,39)];
+  }
+  /* lighter (background color) */
+  .text-secondary {
+    @apply text-[rgb(22,29,51)];
+  }
+  /* lighter (sidebar hover color) */
+  .text-tertiary {
+    @apply text-[rgb(123,199,253)];
+  }
+  /* sidebar menu items color */
+  .text-fourth-color {
+    @apply text-[rgb(31,41,55)];
+  }
+
+  /* ---------- Color pallette for background ------- */
+  /* darker (navbar and sidebar color) */
+  .bg-primary {
+    @apply bg-[rgb(17,24,39)];
+  }
+  /* lighter (background color) */
+  .bg-secondary {
+    @apply bg-[rgb(22,29,51)];
+  }
+  /* lighter (sidebar hover color) */
+  .bg-tertiary {
+    @apply bg-[rgb(123,199,253)];
+  }
+  /* sidebar menu items color */
+  .bg-fourth-color {
+    @apply bg-[rgb(31,41,55)];
+  }
+  /* =============CUSTOM ELEMENTS========= */
+  /* ---------- Sidebar ------- */
+  .sidebar-icon {
+    @apply relative flex items-center justify-center
+    h-12 w-12 mt-2 mb-2 mx-auto shadow-lg
+    bg-gray-800 text-[rgb(123,199,253)]
+    /* make the background green and white on hover */
+    hover:bg-tertiary hover:text-white
+    /* make the icons more rounded on hover*/
+    rounded-3xl hover:rounded-xl
+    /* modify the duration and easing of the transition for better animation */
+    transition-all duration-300 ease-linear;
+  }
+  .sidebar-icon-focused {
+    @apply relative flex items-center justify-center
+    h-12 w-12 mt-2 mb-2 mx-auto shadow-lg
+    bg-tertiary text-white
+    /* make the icons more rounded on hover*/
+    rounded-xl
+    /* modify the duration and easing of the transition for better animation */
+    transition-all duration-300 ease-linear;
+  }
+  .sidebar-tooltip {
+    @apply absolute w-auto p-2 m-2 min-w-max left-14
+    rounded-md shadow-md
+    z-50
+    text-[rgb(123,199,253)] bg-gray-800
+    text-xs font-bold
+    /* the scale o 0 is used to make the tooltip invisible until we hover */
+    transition-all duration-100 scale-0 origin-left;
+  }
+
+  /* ---------- HTML elements ------- */
+  .header-text {
+    @apply text-3xl font-bold text-gray-300;
+  }
+  .paragraph-text {
+    @apply text-lg text-gray-400;
+  }
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

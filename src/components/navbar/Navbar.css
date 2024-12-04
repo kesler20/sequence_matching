@@ -1,0 +1,174 @@
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+:root {
+  --nav-size: 80px;
+  --speed: 500ms;
+  --icon-button-border-radius: 50%;
+  --navbar-content-margin: 7vw;
+  /* since the nav-size is 80px it will overlap with it by 8 px */
+  --dropdown-menu-top-height: 72px;
+  --navbar-links-spacing: 0.9;
+  --navbar-button-size: 0.6;
+  --menu-items-height: 55px;
+}
+
+a {
+  color: var(--tertiary-color);
+}
+
+/* Top Navigation Bar */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--nav-size);
+  background-color: var(--primary-color);
+  border-bottom: var(--border);
+  z-index: 100;
+}
+
+.navbar__logo {
+  margin: 0 var(--navbar-content-margin);
+}
+
+/* <nav> */
+.navbar__links {
+  height: var(--nav-size);
+  background-color: var(--primary-color);
+  padding: 0 var(--navbar-content-margin);
+  border-bottom: var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* <ul> */
+.navbar__links__container {
+  max-width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* <li> */
+/* the width corresponds to the width of each nav-items which are boxes slightly smaller than the navbar links container */
+.navbar__links__container__item {
+  width: calc(var(--nav-size) * var(--navbar-links-spacing));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: slideInLeftFadeIn 1s ease-out forwards;
+}
+
+/* Icon Button */
+.icon-button {
+  --button-size: calc(var(--nav-size) * var(--navbar-button-size));
+  width: var(--button-size);
+  height: var(--button-size);
+  background-color: var(--fourth-color);
+  border-radius: var(--icon-button-border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: filter 300ms;
+  /* this is used to space out the dropdown menus items from the borer */
+  margin: 2px;
+}
+
+.icon-button:hover {
+  filter: brightness(1.2);
+}
+
+.icon-button svg {
+  fill: var(--tertiary-color);
+  width: 20px;
+  height: 20px;
+}
+
+/* Dropdown Menu */
+.navbar__dropdown {
+  position: absolute;
+  z-index: 1000;
+  top: var(--dropdown-menu-top-height);
+  width: 300px;
+  transform: translateX(-45%);
+  background-color: var(--primary-color);
+  border: var(--border);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  overflow: hidden;
+  transition: height var(--speed) ease;
+}
+
+.navbar__dropdown__menu {
+  width: 100%;
+}
+
+.navbar__dropdown__menu__menu-item {
+  height: var(--menu-items-height);
+  display: flex;
+  align-items: center;
+  border-radius: var(--border-radius);
+  transition: var(--speed);
+  padding: 0.5rem;
+}
+
+.navbar__dropdown__menu__menu-item .icon-button {
+  margin-right: 0.5rem;
+}
+
+.navbar__dropdown__menu__menu-item .icon-button:hover {
+  filter: none;
+}
+
+.navbar__dropdown__menu__menu-item:hover {
+  background-color: #525357;
+}
+
+.icon-right {
+  margin-left: auto;
+}
+
+/* CSSTransition classes  */
+.navbar__dropdown__menu--primary-enter {
+  position: absolute;
+  transform: translateX(-110%);
+}
+.navbar__dropdown__menu--primary-enter-active {
+  transform: translateX(0%);
+  transition: all var(--speed) ease;
+}
+.navbar__dropdown__menu--primary-exit {
+  position: absolute;
+}
+.navbar__dropdown__menu--primary-exit-active {
+  transform: translateX(-110%);
+  transition: all var(--speed) ease;
+}
+
+.navbar__dropdown__menu--secondary-enter {
+  transform: translateX(110%);
+}
+.navbar__dropdown__menu--secondary-enter-active {
+  transform: translateX(0%);
+  transition: all var(--speed) ease;
+}
+
+.navbar__dropdown__menu--secondary-exit-active {
+  transform: translateX(110%);
+  transition: all var(--speed) ease;
+}
+
+@keyframes slideInLeftFadeIn {
+  from {
+    transform: translateX(-110%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
