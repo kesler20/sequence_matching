@@ -198,7 +198,7 @@ export default function VerticalLinearStepperComponent(props: {
     };
 
     for (let i = -1; i < numberOfFilesToDownload; i++) {
-      const url = `${process.env.REACT_APP_BACKEND_URL_PROD}/sequencematching/${i}`;
+      const url = `${process.env.REACT_APP_BACKEND_URL_DEV}/sequencematching/${i}`;
       const filename = i === -1 ? "linear_plot.png" : `plot${i}.png`;
       const waitTime = i === -1 ? 4 : i;
 

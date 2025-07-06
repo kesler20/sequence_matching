@@ -11,12 +11,14 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_FOLDER = os.path.join(current_dir, "results")
 SCANS_FOLDER = os.path.join(current_dir, "uploads")
 
+
 def reset_input_and_output_folders():
     for file in os.listdir(SCANS_FOLDER):
         os.remove(os.path.join(SCANS_FOLDER, file))
 
     for file in os.listdir(OUTPUT_FOLDER):
         os.remove(os.path.join(OUTPUT_FOLDER, file))
+
 
 def main(last: int, scans: int, message_bus: MQTTAdapter):
     """This is the sequence matching algorithms
@@ -50,13 +52,13 @@ def main(last: int, scans: int, message_bus: MQTTAdapter):
             print(e)
 
     # Get the file names of the scans
-    filename1, filename2, filename3 = None, None , None
+    filename1, filename2, filename3 = None, None, None
     name1, name2, name3 = None, None, None
 
     for index, filepath in enumerate(os.listdir(SCANS_FOLDER)):
         if index == 0:
             filename1 = os.path.join(SCANS_FOLDER, filepath)
-            name1 = filepath.replace(".png", "").replace(".jpg", "")     
+            name1 = filepath.replace(".png", "").replace(".jpg", "")
         elif index == 1:
             filename2 = os.path.join(SCANS_FOLDER, filepath)
             name2 = filepath.replace(".png", "").replace(".jpg", "")
@@ -127,13 +129,16 @@ def main(last: int, scans: int, message_bus: MQTTAdapter):
         C4 = (C1 + C2 + C3) / 3
         # turn to grey scale matrix
 
-        border = []
-        C5 = C4
-        C5[(C5 < 1)] = 0
+        # --- PATCHED: binarize, erode, update mask ---
+        C5_bin = (C4 > 0.95).astype(np.uint8)
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 2))
+        C5 = cv2.erode(C5_bin, kernel, iterations=1).astype(float)
 
         mask = np.array(
-            [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
-        ).reshape(3, -4)
+            [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]],
+            dtype=float,
+        )
+        # --- END PATCH ---
 
         C5y = C5.shape[0]
         C5x = C5.shape[1]
@@ -162,12 +167,26 @@ def main(last: int, scans: int, message_bus: MQTTAdapter):
 
         t3 = t2.sum(axis=1)
 
+        # --- PATCHED: border/gaps/cut logic ---
         val = np.argwhere(t3 < C5x - 6)
         border = val + 1
+        gaps = np.diff(border[:, 0])
+        cut = np.where(gaps > gaps.mean() * 2)[0]
+        if cut.size:
+            border = border[: cut[0] + 1]
+        # --- END PATCH ---
 
-        scal1 = np.diff(np.argwhere(t2.sum(axis=0) < t2.shape[0]), axis=0)
-        scal1 = scal1[np.greater(scal1, scal1.mean())]
-        scal2 = scal1.max()
+        # --- robust column-width estimation -------------------------------------------
+        scal1_candidates = np.diff(np.argwhere(t2.sum(axis=0) < t2.shape[0]), axis=0)
+
+        if scal1_candidates.size == 0:
+            # no visible gaps → fall back to coloured-bar lengths (l3) or 22 px default
+            scal2 = np.median(l3) if len(l3) else 22.0
+        else:
+            mean_val = scal1_candidates.mean()
+            scal1 = scal1_candidates[scal1_candidates > mean_val]
+            scal2 = scal1.max() if scal1.size else np.median(l3) if len(l3) else 22.0
+        # -------------------------------------------------------------------------------
 
         scal3 = np.diff(np.argwhere(t2.sum(axis=1) < t2.shape[1]), axis=0)
 
@@ -868,7 +887,7 @@ def main(last: int, scans: int, message_bus: MQTTAdapter):
     # %% ======= LINEAR PLOTS ==============================================
 
     print("Creating linear plots...")
-    message_bus.publish_data("sequence_matching_progress/plot", {"step" : "linear_plot" })
+    message_bus.publish_data("sequence_matching_progress/plot", {"step": "linear_plot"})
 
     # New shape will be (17, 930, 3) to include the white rows
     extended_grid_data = np.ones(
@@ -1015,12 +1034,10 @@ def main(last: int, scans: int, message_bus: MQTTAdapter):
 
     plt.axis("off")
 
-    plt.savefig(
-        os.path.join(OUTPUT_FOLDER, "linear_plot.png")
-    )
-    
-    message_bus.publish_data("sequence_matching_progress/plot", {"step" : "completed" })
-    
+    plt.savefig(os.path.join(OUTPUT_FOLDER, "linear_plot.png"))
+
+    message_bus.publish_data("sequence_matching_progress/plot", {"step": "completed"})
+
     # send 100 messages to the frontend to let it know what the
     for i in range(100):
         message_bus.publish_data(

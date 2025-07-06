@@ -48,7 +48,7 @@ export default class MQTTApi {
     const REGION = "eu-west-2";
 
     // your AWS access key ID
-    const AWS_ACCESS_KEY_ID = process.env.REACT_APP_AWS_ACCESS_KEY_ID;
+    const AWS_ACCESS_KEY_ID = process.env.REACT_APP_AWS_ACCESS_KEY;
 
     // your AWS secret access key
     const AWS_SECRET_ACCESS_KEY = process.env.REACT_APP_AWS_SECRET_KEY;

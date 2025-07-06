@@ -20,7 +20,7 @@ import {
   PLSResponse,
 } from "../pages/data_analytics/state_machine/types";
 
-export const URL = process.env.REACT_APP_BACKEND_URL_PROD;
+export const URL = process.env.REACT_APP_BACKEND_URL_DEV || "http://localhost:8000";
 
 export const getUserData = async (username: string) => {
   try {
