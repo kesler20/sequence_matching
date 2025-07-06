@@ -161,4 +161,5 @@ ENV/
 9343eecbd39fc8666c2dceff21b308511388e4812042b6a58374f20885f45b57-private.pem.key
 9343eecbd39fc8666c2dceff21b308511388e4812042b6a58374f20885f45b57-public.pem.key
 AmazonRootCA1.pem
-AmazonRootCA3.pem
+AmazonRootCA3.pemsequence_matching-env
+.dev_logs
