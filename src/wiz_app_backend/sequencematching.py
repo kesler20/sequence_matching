@@ -131,23 +131,31 @@ def main(last: int, scans: int, message_bus: MQTTAdapter):
 
         # --- PATCHED: binarize, erode, update mask ---
         C5_bin = (C4 > 0.95).astype(np.uint8)
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 2))
+        # Use a slightly larger kernel to handle 2-pixel-thick dashes
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 3))
         C5 = cv2.erode(C5_bin, kernel, iterations=1).astype(float)
 
+        # Updated mask for 2-pixel-thick dashes
         mask = np.array(
-            [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]],
+            [
+                [1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1],
+            ],
             dtype=float,
         )
         # --- END PATCH ---
 
         C5y = C5.shape[0]
         C5x = C5.shape[1]
-        t = np.zeros((C5y - 2, C5x - 6))
+        # Adjust t shape for new mask size
+        t = np.zeros((C5y - mask.shape[0] + 1, C5x - mask.shape[1] + 1))
 
         # move to the next active task
         number_of_tasks_completed += 1
 
-        for i in tqdm(range(0, C5x - 6)):
+        for i in tqdm(range(0, C5x - mask.shape[1] + 1)):
 
             # publish the telemetry
             message_bus.publish_data(
@@ -158,9 +166,11 @@ def main(last: int, scans: int, message_bus: MQTTAdapter):
                 {"tasks completed": number_of_tasks_completed},
             )
 
-            for j in range(0, C5y - 2):
+            for j in range(0, C5y - mask.shape[0] + 1):
 
-                t[j, i] = abs(C5[j : j + 3, i : i + 7] - mask).sum()
+                t[j, i] = abs(
+                    C5[j : j + mask.shape[0], i : i + mask.shape[1]] - mask
+                ).sum()
 
         t2 = abs(t)
         t2[(t2 > 0)] = 1
@@ -168,15 +178,26 @@ def main(last: int, scans: int, message_bus: MQTTAdapter):
         t3 = t2.sum(axis=1)
 
         # --- PATCHED: border/gaps/cut logic ---
-        val = np.argwhere(t3 < C5x - 6)
+        val = np.argwhere(t3 < C5x - mask.shape[1] + 1)
         border = val + 1
-        gaps = np.diff(border[:, 0])
-        cut = np.where(gaps > gaps.mean() * 2)[0]
+        gaps = np.diff(border[:, 0]) if border.shape[0] > 1 else np.array([])
+        # Only cut at the first large gap (to ignore extra sequence blocks)
+        if gaps.size > 0:
+            cut = np.where(gaps > (gaps.mean() * 2))[0]
+        else:
+            cut = np.array([], dtype=int)
         if cut.size:
             border = border[: cut[0] + 1]
         # --- END PATCH ---
 
         # --- robust column-width estimation -------------------------------------------
+        # Ensure l3 is always defined before use
+        l1 = []
+        l3 = []
+        l5 = []
+        l6 = []
+        l7 = []
+
         scal1_candidates = np.diff(np.argwhere(t2.sum(axis=0) < t2.shape[0]), axis=0)
 
         if scal1_candidates.size == 0:
@@ -190,13 +211,23 @@ def main(last: int, scans: int, message_bus: MQTTAdapter):
 
         scal3 = np.diff(np.argwhere(t2.sum(axis=1) < t2.shape[1]), axis=0)
 
-        border2 = np.around((np.diff((border), axis=0) - 42) / 22)
-        border2 = np.append(border2, [0])
-        border = np.transpose(
-            np.concatenate(
-                [border, np.reshape(border2, (border2.shape[0], -1))], axis=1
-            )
+        # Defensive: handle empty border for concatenation
+        border2 = (
+            np.around((np.diff((border), axis=0) - 42) / 22)
+            if border.shape[0] > 1
+            else np.array([])
         )
+        border2 = np.append(border2, [0])
+        # Only concatenate if border and border2 shapes match
+        if border.shape[0] == border2.shape[0]:
+            border = np.transpose(
+                np.concatenate(
+                    [border, np.reshape(border2, (border2.shape[0], -1))], axis=1
+                )
+            )
+        else:
+            # fallback: just use border as is (skip concatenation)
+            border = border.T if border.ndim == 2 else border
 
         #!!!!! need to join border and border2 together into new border 2 row variable !!!!
 
@@ -205,12 +236,6 @@ def main(last: int, scans: int, message_bus: MQTTAdapter):
         found_bar = 0
         pixel_check = 10
         new = 1
-
-        l1 = []
-        l3 = []
-        l5 = []
-        l6 = []
-        l7 = []
 
         # move to the next active task
         number_of_tasks_completed += 1
@@ -250,7 +275,7 @@ def main(last: int, scans: int, message_bus: MQTTAdapter):
                     found_bar = found_bar + 1
 
         l2 = np.array(l1)
-        l4 = np.around(l3 / scal2)
+        l4 = np.around(np.array(l3) / scal2)
         l = np.concatenate(
             ([l2[:, 0]], [l2[:, 1]], [l3], [l4], [l5], [l6], [l7]), axis=0
         ).transpose()
@@ -292,8 +317,12 @@ def main(last: int, scans: int, message_bus: MQTTAdapter):
         for i in range(0, l.shape[0]):
             temp = border[0, :] - l[i, 0]
             temp[(temp > 0)] = np.nan
-            c, ind = np.nanmax(temp), np.nanargmax(temp)
-            index.append(ind + 1)
+            # Defensive: skip if all values are nan or temp is empty
+            if np.all(np.isnan(temp)) or temp.size == 0:
+                index.append(0)
+            else:
+                c, ind = np.nanmax(temp), np.nanargmax(temp)
+                index.append(ind + 1)
 
         index = np.array(index)
         l9 = (index - 1) * 50 + 1
@@ -313,8 +342,6 @@ def main(last: int, scans: int, message_bus: MQTTAdapter):
             ],
             axis=1,
         )
-
-        l = l[l[:, 11] != 0]
 
         # %% ======== BAR MATCHING =====================================================
 
@@ -1043,3 +1070,7 @@ def main(last: int, scans: int, message_bus: MQTTAdapter):
         message_bus.publish_data(
             "sequence_matching_progress/tasks_completed", {"tasks completed": "ALL"}
         )
+
+
+if __name__ == "__main__":
+    main(last=931, scans=2, message_bus=MQTTAdapter())
