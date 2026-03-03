@@ -2,39 +2,33 @@ import React from "react";
 import "./FileUpload.css";
 import { ImageConfig, ValidImageConfigOptions } from "./ImageConfig";
 import uploadImg from "../../assets/upload/cloud-upload-regular-240.png";
-import LoadingSpinner from "../animated_components/LoadingSpinner";
 import { FaCheck } from "react-icons/fa";
 import { RxCross1 } from "react-icons/rx";
 import Button, { ButtonState } from "../buttons/Button";
 import { AlertMessageSeverity } from "../alert_message/AlertMessage";
-import useStateApiDataContext from "../../contexts/ApiDataContextProvider";
-import { updateFile, uploadFile } from "../../apis/requests";
-import DataFrameFile, { UserFile } from "../../apis/DataFrameFile";
-import { getResourceFromCache } from "../../apis/customHooks";
 import toastFactory, { MessageSeverity } from "../alert_message/ToastMessage";
 
 export default function FileUpload(props: {
-  fileList: any;
-  setFileList: any;
-  onFileChange: any;
+  fileList: File[];
+  setFileList: (files: File[]) => void;
+  onFileChange: (files: File[]) => void;
   allFilesAreValid: boolean;
   onValidFilesSubmitted?: (formData: FormData) => void;
+  canSubmit: boolean;
 }) {
   const { fileList, setFileList } = props;
-  const { username, setUserFiles } = useStateApiDataContext();
   const [outcome, setOutcome] = React.useState<UploadOutcomeType>(
-    UploadOutcomeState.IDLE
+    UploadOutcomeState.IDLE,
   );
 
-  // initialise reference HTML elements
-  const wrapperRef = React.useRef<HTMLInputElement>(null);
+  // drag-and-drop handlers
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
   const onDragEnter = () => wrapperRef?.current?.classList.add("dragover");
   const onDragLeave = () => wrapperRef?.current?.classList.remove("dragover");
   const onDrop = () => wrapperRef?.current?.classList.remove("dragover");
 
-  // add files
-  const onFileDrop = (e: any) => {
-    const newFile = e.target.files[0];
+  const onFileDrop = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newFile = e.target.files?.[0];
     if (newFile) {
       const updatedList = [...fileList, newFile];
       setFileList(updatedList);
@@ -42,101 +36,40 @@ export default function FileUpload(props: {
     }
   };
 
-  // remove files
-  const fileRemove = (file: any) => {
-    const updatedList = [...fileList];
-    updatedList.splice(fileList.indexOf(file), 1);
+  const fileRemove = (file: File) => {
+    const updatedList = fileList.filter((f) => f !== file);
     setFileList(updatedList);
     props.onFileChange(updatedList);
   };
 
-  // submit files
-  const handleSubmit = (e: any) => {
-    // reset the alert message to default (do not display)
-    // setAlertMessageType(false);
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const formData = new FormData();
-    fileList.forEach((file: any) => {
-      formData.append("uploaded_file", file);
-      const filename = file.name;
-      console.log(filename, file.size);
-      console.log(Array.from(formData.entries()));
-      // if the file is allowed
-      if (props.allFilesAreValid) {
-        setOutcome(UploadOutcomeState.LOADING);
-        initiateFileUpload(formData, filename, username);
-      } else {
-        toastFactory(
-          "One or more uploaded file(s) are not supported 😞",
-          MessageSeverity.WARNING
-        );
-        setOutcome(UploadOutcomeState.WARNING);
-      }
-    });
-  };
 
-  const initiateFileUpload = async (
-    formData: FormData,
-    filename: string,
-    username: string
-  ) => {
-    const response = await uploadFile(formData, username);
-
-    if (response !== undefined) {
-      const newFile = new DataFrameFile(response);
-      setUserFiles((userFile: UserFile[]) => {
-        return [...userFile, newFile.getUserFile()];
-      });
-      setOutcome(UploadOutcomeState.SUCCESS);
-      if (props.onValidFilesSubmitted) {
-        props.onValidFilesSubmitted(formData);
-      }
-    } else {
-      toastFactory(`updating ${filename} contents...`, MessageSeverity.INFO);
-      initiateFileUpdate(formData, username, filename);
-    }
-  };
-
-  const initiateFileUpdate = async (
-    formData: FormData,
-    username: string,
-    filename: string
-  ) => {
-    const response = await updateFile(formData, username);
-
-    if (response !== undefined) {
-      let files: UserFile[] = getResourceFromCache("userFiles");
-      files = files.map((fileFromCache: UserFile) => {
-        if (fileFromCache.filename === filename) {
-          const newFileContent = new DataFrameFile(response).getUserFile().content;
-          const newFileContentTable = new DataFrameFile(response).getUserFile()
-            .content_table;
-          fileFromCache.content = newFileContent;
-          fileFromCache.content_table = newFileContentTable;
-        }
-        return fileFromCache;
-      });
-
-      setUserFiles(files);
-      toastFactory("File uploaded successfully!", MessageSeverity.SUCCESS);
-      setOutcome(UploadOutcomeState.SUCCESS);
-    } else {
-      toastFactory(`There was an error updating ${filename}`, MessageSeverity.ERROR);
+    if (!props.allFilesAreValid) {
+      toastFactory(
+        "One or more uploaded file(s) are not supported",
+        MessageSeverity.WARNING,
+      );
       setOutcome(UploadOutcomeState.ERROR);
+      return;
+    }
+
+    const formData = new FormData();
+    fileList.forEach((file, index) => {
+      formData.append(`upload_file${index + 1}`, file);
+    });
+
+    if (props.onValidFilesSubmitted) {
+      props.onValidFilesSubmitted(formData);
     }
   };
 
-  const resetState = (e: any) => {
+  const resetState = () => {
     setOutcome(UploadOutcomeState.IDLE);
   };
 
-  const renderAlertMessage = (outcome: UploadOutcomeType) => {
+  const renderSubmitButton = (outcome: UploadOutcomeType) => {
     switch (outcome) {
-      case "idle":
-        return <Button inner="Submit" buttonType={outcome} onClick={handleSubmit} />;
-      case "loading":
-        return <Button buttonType={outcome} inner={<LoadingSpinner />} />;
-
       case "success":
         return (
           <Button
@@ -144,16 +77,18 @@ export default function FileUpload(props: {
             inner={<FaCheck color="white" className="w-26" onClick={resetState} />}
           />
         );
-
-      case "warning":
-        return <Button inner={"Submit"} onClick={handleSubmit} />;
-
       case "error":
         return (
           <Button
             buttonType={outcome}
             inner={<RxCross1 color="red" onClick={resetState} />}
           />
+        );
+      default:
+        return props.canSubmit ? (
+          <Button inner="Submit" onClick={handleSubmit} bgColor="rgb(35,197,94)" />
+        ) : (
+          <Button inner="Submit" onClick={handleSubmit} />
         );
     }
   };
@@ -173,10 +108,10 @@ export default function FileUpload(props: {
         </div>
         <input type="file" value="" onChange={onFileDrop} />
       </div>
-      {fileList.length > 0 ? (
+      {fileList.length > 0 && (
         <div className="drop-file-preview">
           <p className="drop-file-preview__title">Ready to upload</p>
-          {fileList.map((item: any, index: number) => (
+          {fileList.map((item, index) => (
             <div key={index} className="drop-file-preview__item">
               <img
                 src={
@@ -198,8 +133,8 @@ export default function FileUpload(props: {
             </div>
           ))}
         </div>
-      ) : null}
-      <div className="flex mt-5 justify-center">{renderAlertMessage(outcome)}</div>
+      )}
+      <div className="flex mt-5 justify-center">{renderSubmitButton(outcome)}</div>
     </form>
   );
 }
@@ -209,11 +144,4 @@ const UploadOutcomeState = {
   ...AlertMessageSeverity,
 } as const;
 
-type UploadOutcomeType =
-  | "success"
-  | "idle"
-  | "fetch success"
-  | "fetch error"
-  | "warning"
-  | "loading"
-  | "error";
+type UploadOutcomeType = "success" | "idle" | "warning" | "error";

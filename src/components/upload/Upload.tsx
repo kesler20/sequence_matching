@@ -22,7 +22,7 @@ export default function Upload(props: {
 }) {
   const [allowedSubmit, setAllowedSubmit] = React.useState(true);
   const [fileList, setFileList] = React.useState(
-    props.initialFileList ? props.initialFileList : []
+    props.initialFileList ? props.initialFileList : [],
   );
 
   // set the default allowed file types
@@ -47,7 +47,7 @@ export default function Upload(props: {
           .map((fileExtension) => {
             return file.name.includes(fileExtension);
           })
-          .some((item) => item === true)
+          .some((item) => item === true),
       );
     });
     props.onFileChange(files);
@@ -75,6 +75,7 @@ export default function Upload(props: {
               fileList={fileList}
               setFileList={setFileList}
               onValidFilesSubmitted={props.onValidFilesSubmitted}
+              canSubmit={props.canSubmit}
             />
           )}
         </div>

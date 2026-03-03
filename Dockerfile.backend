@@ -29,4 +29,4 @@ EXPOSE 8000
 ENV PYTHONPATH=/app
 
 # Start the application using uvicorn with gunicorn as the worker
-CMD ["gunicorn", "wiz_app_backend.app:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000"]
+CMD ["gunicorn", "server.app:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000"]

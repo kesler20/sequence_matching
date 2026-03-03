@@ -1,5 +1,4 @@
 import React from "react";
-import useStateApiDataContext from "../../../contexts/ApiDataContextProvider";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
@@ -8,8 +7,9 @@ import { primaryColor, textColor } from "../../../global_styles/colorPalette";
 import { ReactComponent as BellIcon } from "../icons/bell.svg";
 import { IoIosShareAlt } from "react-icons/io";
 
+const notifications = []
+
 export default function NotificationDropdownMenu() {
-  const { notifications } = useStateApiDataContext();
   const [activeMenu, setActiveMenu] = React.useState("");
   const [menuHeight, setMenuHeight] = React.useState(null);
   const [open, setOpen] = React.useState(false);
