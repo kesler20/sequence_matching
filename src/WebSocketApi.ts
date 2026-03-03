@@ -12,9 +12,7 @@
  * ```
  */
 
-const WS_BASE_URL =
-  process.env.REACT_APP_BACKEND_URL_DEV?.replace(/^http/, "ws") ||
-  "ws://localhost:8000";
+const WS_BASE_URL = process.env.REACT_APP_BACKEND_URL_DEV?.replace(/^http/, "ws");
 
 type MessageCallback = (data: any) => void;
 
