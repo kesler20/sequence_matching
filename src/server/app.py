@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 __version__ = "0.3.1"
-FRONT_END_URL = os.getenv("REACT_APP_FRONT_END_URL")
+FRONT_END_URL = "https://wiz-app.up.railway.app"
 
 
 # ============ INSTANTIATE APP OBJECT ===============

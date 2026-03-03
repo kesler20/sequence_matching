@@ -15,6 +15,8 @@ type Step = {
 
 let activeStep = 0;
 
+const REACT_APP_BACKEND_URL_DEV = "https://wiz-app-production.up.railway.app";
+
 const stepsFactory = (numberOfFilesToDownload: number): Step[] => {
   if (numberOfFilesToDownload === 1) {
     return [
@@ -189,7 +191,7 @@ export default function VerticalLinearStepperComponent(props: {
     };
 
     for (let i = -1; i < numberOfFilesToDownload; i++) {
-      const url = `${process.env.REACT_APP_BACKEND_URL_DEV}/sequencematching/${i}`;
+      const url = `${REACT_APP_BACKEND_URL_DEV}/sequencematching/${i}`;
       const filename = i === -1 ? "linear_plot.png" : `plot${i}.png`;
       const waitTime = i === -1 ? 4 : i;
 
