@@ -39,7 +39,7 @@ export default function App() {
       const stateIndex = stateTitles.indexOf(state.value);
       setCurrentState(stateIndex);
     }
-  }, [state.value]);
+  }, [state.value, steps]);
 
   React.useEffect(() => {
     createResourceInCache("sequence_matching/state", state);

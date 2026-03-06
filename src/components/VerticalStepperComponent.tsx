@@ -159,7 +159,7 @@ export default function VerticalLinearStepperComponent(props: {
     return () => {
       ws.disconnect();
     };
-  }, [props.websocket]);
+  }, [props.websocket, steps.length]);
 
   const updateLinearProgress = (current: number, total: number) => {
     setCurrentValue(current);
