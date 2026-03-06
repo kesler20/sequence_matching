@@ -63,12 +63,12 @@ jobs:
         run: pnpm run build
 
       - name: Create SPA fallback (404.html)
-        run: cp dist/index.html dist/404.html
+        run: cp build/index.html build/404.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "./dist"
+          path: "./build"
 
       - name: Deploy to GitHub Pages
         id: deployment
