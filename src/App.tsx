@@ -39,7 +39,8 @@ export default function App() {
       const stateIndex = stateTitles.indexOf(state.value);
       setCurrentState(stateIndex);
     }
-  }, [state.value, steps]);
+  }, [state.value]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   React.useEffect(() => {
     createResourceInCache("sequence_matching/state", state);

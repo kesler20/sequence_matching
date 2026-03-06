@@ -159,7 +159,8 @@ export default function VerticalLinearStepperComponent(props: {
     return () => {
       ws.disconnect();
     };
-  }, [props.websocket, steps.length]);
+  }, [props.websocket]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   const updateLinearProgress = (current: number, total: number) => {
     setCurrentValue(current);
