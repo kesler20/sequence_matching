@@ -9,7 +9,7 @@ import WebSocketApi from "../WebSocketApi";
 import Button from "./buttons/Button";
 import toastFactory, { MessageSeverity } from "./alert_message/ToastMessage";
 
-type Step = {
+type StepType = {
   label: string;
 };
 
@@ -17,7 +17,7 @@ let activeStep = 0;
 
 const REACT_APP_BACKEND_URL_DEV = "https://wiz-app-production.up.railway.app";
 
-const stepsFactory = (numberOfFilesToDownload: number): Step[] => {
+const stepsFactory = (numberOfFilesToDownload: number): StepType[] => {
   if (numberOfFilesToDownload === 1) {
     return [
       {
@@ -88,7 +88,7 @@ export default function VerticalLinearStepperComponent(props: {
   const [currentTotal, setCurrentTotal] = React.useState(100);
 
   // depending on how many files were uploaded, the steps factory will return different components
-  let steps: Step[] = stepsFactory(props.numberOfFilesUploaded);
+  let steps: StepType[] = stepsFactory(props.numberOfFilesUploaded);
 
   // this effect is used to listen to the WebSocket messages and update the progress bar.
   React.useEffect(() => {

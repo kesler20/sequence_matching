@@ -36,6 +36,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Run Type Checking
+        run: pnpm run type-check
+
   deploy:
     needs: test
     runs-on: ubuntu-latest

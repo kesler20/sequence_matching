@@ -1,4 +1,4 @@
-import { assign, createMachine, Typestate } from "xstate";
+import { createMachine, Typestate } from "xstate";
 import { actions, guards } from "../utils";
 import {
   SequenceMatchingContext,
