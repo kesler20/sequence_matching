@@ -1,0 +1,41 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Testing
+coverage
+
+# Production
+# Note: We need inject-env.sh for runtime environment injection
+
+# Development
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Git
+.git
+.gitignore
+.github
+
+# IDEs
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md
+supporting_information/
+
+# Python
+__pycache__
+*.py[cod]
+*.egg-info
+.venv
+wiz-app-env
