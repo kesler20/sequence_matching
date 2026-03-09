@@ -1,6 +1,6 @@
 # Sequence Matching
 
-This is the repository of the sequence matching tool.
+This is the repository of the [sequence matching tool](https://kesler20.github.io/sequence_matching)
 
 ![home](https://github.com/kesler20/sequence_matching/blob/master/sequence%20matching%20image.png)
 
