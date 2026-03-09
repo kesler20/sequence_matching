@@ -4,7 +4,7 @@ import json
 from server.websocket_adapter import WebSocketAdapter
 import server.sequencematching as sequencematching_use_case
 from fastapi import UploadFile, File, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
 from fastapi.middleware.cors import CORSMiddleware
@@ -243,6 +243,11 @@ def get_spiral_plot(plot_number: int):
         filename=os.path.join(f"plot{plot_number}.png"),
     )
 
+
+@app.get("/docs")
+async def read_docs():
+    response = RedirectResponse(url="/docs")
+    return response
 
 @app.get("/", tags=["root"])
 async def read_root():
