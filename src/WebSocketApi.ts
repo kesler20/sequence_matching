@@ -12,7 +12,7 @@
  * ```
  */
 
-const WS_REACT_APP_BACKEND_URL_DEV = "wss://wiz-app-production.up.railway.app";
+import { BACKEND_WS_URL } from "./config/urls";
 
 type MessageCallback = (data: any) => void;
 
@@ -36,7 +36,7 @@ export default class WebSocketApi {
    */
   async startSequenceMatching(files: File[], sequenceLength: number): Promise<void> {
     return new Promise((resolve, reject) => {
-      const url = `${WS_REACT_APP_BACKEND_URL_DEV}/ws/sequence-matching`;
+      const url = `${BACKEND_WS_URL}/ws/sequence-matching`;
       this.socket = new WebSocket(url);
 
       this.socket.onopen = async () => {

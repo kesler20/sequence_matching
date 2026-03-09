@@ -4,7 +4,7 @@ import json
 from server.websocket_adapter import WebSocketAdapter
 import server.sequencematching as sequencematching_use_case
 from fastapi import UploadFile, File, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,7 +15,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 __version__ = "0.3.1"
-FRONT_END_URL = "https://wiz-app.up.railway.app"
+FRONT_END_URL = os.getenv("FRONT_END_URL", "https://wiz-app.up.railway.app")
+PUBLIC_FRONTEND_URL = os.getenv(
+    "PUBLIC_FRONTEND_URL", "https://kesler20.github.io/sequence_matching"
+)
 
 
 # ============ INSTANTIATE APP OBJECT ===============
@@ -32,6 +35,7 @@ origins = [
     "http://0.0.0.0:3000",
     "http://localhost:3001",
     FRONT_END_URL,
+    PUBLIC_FRONTEND_URL,
 ]
 
 app.add_middleware(
@@ -242,8 +246,57 @@ def get_spiral_plot(plot_number: int):
 
 @app.get("/", tags=["root"])
 async def read_root():
-    response = RedirectResponse(url="/docs")
-    return response
+    return HTMLResponse(
+        content=f"""
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sequence Matching</title>
+        <style>
+            body {{
+                margin: 0;
+                min-height: 100vh;
+                display: grid;
+                place-items: center;
+                font-family: Arial, sans-serif;
+                background: #0f172a;
+                color: #e2e8f0;
+            }}
+            .banner {{
+                max-width: 720px;
+                margin: 24px;
+                padding: 24px;
+                border-radius: 12px;
+                background: #1e293b;
+                border: 1px solid #334155;
+                text-align: center;
+            }}
+            .link {{
+                display: inline-block;
+                margin-top: 16px;
+                padding: 10px 16px;
+                border-radius: 8px;
+                text-decoration: none;
+                background: #38bdf8;
+                color: #0f172a;
+                font-weight: 700;
+            }}
+        </style>
+    </head>
+    <body>
+        <main class="banner">
+            <h1>Sequence Matching has moved</h1>
+            <p>
+                This Railway app will be retired soon. Please use the official frontend at:
+            </p>
+            <a class="link" href="{PUBLIC_FRONTEND_URL}">{PUBLIC_FRONTEND_URL}</a>
+        </main>
+    </body>
+</html>
+"""
+    )
 
 
 @app.get("/api/version")

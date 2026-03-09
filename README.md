@@ -5,51 +5,60 @@ This is the repository of the sequence matching tool.
 ![home](https://github.com/kesler20/sequence_matching/blob/master/sequence%20matching%20image.png)
 
 # Getting Started
-Follow the instruction guide at [seqMGuide](https://scribehow.com/shared/How_To_Submit_Data_and_Download_Results__gC83MR_rSq2MSATGuP2zkA)
 
-or [SDIGuide](https://github.com/kesler20/sequence_matching/blob/master/supporting_information/HowToSubmitDataandDownloadResults_PDF_2024-12-04080111.357514.pdf)
+Follow the instruction guide at
+[seqMGuide](https://scribehow.com/shared/How_To_Submit_Data_and_Download_Results__gC83MR_rSq2MSATGuP2zkA)
+
+or
+[SDIGuide](https://github.com/kesler20/sequence_matching/blob/master/supporting_information/HowToSubmitDataandDownloadResults_PDF_2024-12-04080111.357514.pdf)
 
 > **Note**: Make sure that you have one of the BiopharmaFinder versions below
 
-| Version | Release Date | Change Log                                                                                      | Validated | Reference                                                                                                     |
-|---------|--------------|------------------------------------------------------------------------------------------------|-----------|---------------------------------------------------------------------------------------------------------------|
-| 5.0     | 2023         | Workflow-driven experiment creation, method processing, and result review                      | ✅       | [Release Notes](https://assets.thermofisher.com/TFS-Assets/CMD/manuals/man-xcali-98421-biopharma-finder-50-release-manxcali98421-en.pdf) |
-| 5.3     | 2024         | Enhanced peptide mapping, oligonucleotide analysis, intact protein analysis, top-down analysis | ❌       | [Product Page](https://www.thermofisher.com/order/catalog/product/B51001849)                                 |
-
+| Version | Release Date | Change Log                                                                                     | Validated | Reference                                                                                                                                |
+| ------- | ------------ | ---------------------------------------------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 5.0     | 2023         | Workflow-driven experiment creation, method processing, and result review                      | ✅        | [Release Notes](https://assets.thermofisher.com/TFS-Assets/CMD/manuals/man-xcali-98421-biopharma-finder-50-release-manxcali98421-en.pdf) |
+| 5.3     | 2024         | Enhanced peptide mapping, oligonucleotide analysis, intact protein analysis, top-down analysis | ❌        | [Product Page](https://www.thermofisher.com/order/catalog/product/B51001849)                                                             |
 
 # Architecture
 
 The application consists of two parts:
 
-- **Backend** – a [FastAPI](https://fastapi.tiangolo.com/) server (Python) that runs the sequence matching algorithm and streams results over a WebSocket connection. It listens on port **8000** by default.
-- **Frontend** – a [React](https://react.dev/) single-page application that is deployed to **GitHub Pages**. It communicates with the backend over WebSocket (`wss://`) and HTTP (`https://`).
+- **Backend** – a [FastAPI](https://fastapi.tiangolo.com/) server (Python) that runs
+  the sequence matching algorithm and streams results over a WebSocket connection. It
+  listens on port **8000** by default.
+- **Frontend** – a [React](https://react.dev/) single-page application that is
+  deployed to **GitHub Pages**. It communicates with the backend over WebSocket
+  (`wss://`) and HTTP (`https://`).
 
 ---
 
 # Local Installation & Running
 
-Follow these steps to install and run both the backend and the frontend on your machine for local development.
+Follow these steps to install and run both the backend and the frontend on your
+machine for local development.
 
 ## Prerequisites
 
-| Tool | Minimum Version | Notes |
-|------|----------------|-------|
-| Python | 3.9 | Required for the backend |
-| Node.js | 16 | Required for the frontend |
-| npm | 8 | Bundled with Node.js |
-| Git | any | |
+| Tool    | Minimum Version | Notes                     |
+| ------- | --------------- | ------------------------- |
+| Python  | 3.9             | Required for the backend  |
+| Node.js | 16              | Required for the frontend |
+| npm     | 8               | Bundled with Node.js      |
+| Git     | any             |                           |
 
 ## Backend (Python / FastAPI)
 
 ### 1. Create a virtual environment
 
 **macOS / Linux (bash/zsh):**
+
 ```bash
 python -m venv wiz-app-env
 source wiz-app-env/bin/activate
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 python -m venv wiz-app-env
 wiz-app-env\Scripts\Activate.ps1
@@ -78,21 +87,28 @@ Interactive API docs (Swagger UI) are served at `http://localhost:8000/docs`.
 npm install
 ```
 
-### 2. Point the frontend at the local backend
+### 2. Configure URLs in one place
 
-Open `src/WebSocketApi.ts` and update the backend URL constant so it targets `localhost`:
+Copy `.env.example` to `.env` and update the URL values:
 
-```typescript
-// src/WebSocketApi.ts
-const WS_REACT_APP_BACKEND_URL_DEV = "ws://localhost:8000";
+```bash
+# macOS/Linux
+cp .env.example .env
+
+# Windows (PowerShell)
+Copy-Item .env.example .env
 ```
 
-Open `src/components/VerticalStepperComponent.tsx` and update the HTTP URL constant as well:
+Set these for local development:
 
-```typescript
-// src/components/VerticalStepperComponent.tsx
-const REACT_APP_BACKEND_URL_DEV = "http://localhost:8000";
+```env
+REACT_APP_BACKEND_URL=http://localhost:8000
+REACT_APP_FRONTEND_URL=http://localhost:3000
+FRONT_END_URL=http://localhost:3000
 ```
+
+The frontend reads URL exports from `src/config/urls.ts`, and the backend reads
+`FRONT_END_URL` from `.env`.
 
 ### 3. Start the React development server
 
@@ -100,7 +116,8 @@ const REACT_APP_BACKEND_URL_DEV = "http://localhost:8000";
 npm start
 ```
 
-The frontend will be available at `http://localhost:3000` and will automatically reload when you edit source files.
+The frontend will be available at `http://localhost:3000` and will automatically
+reload when you edit source files.
 
 ---
 
@@ -122,7 +139,8 @@ docker build -f Dockerfile.backend -t sequence-matching-backend .
 docker run -p 8000:8000 sequence-matching-backend
 ```
 
-The `-p 8000:8000` flag maps port **8000** inside the container to port **8000** on your host machine, so the API is reachable at `http://localhost:8000`.
+The `-p 8000:8000` flag maps port **8000** inside the container to port **8000** on
+your host machine, so the API is reachable at `http://localhost:8000`.
 
 To run in detached (background) mode:
 
@@ -154,7 +172,8 @@ The frontend will be available at `http://localhost:3000`.
 
 ## Running Both Services Together
 
-You can start both containers at the same time using separate terminal windows, or chain the commands:
+You can start both containers at the same time using separate terminal windows, or
+chain the commands:
 
 ```bash
 # Terminal 1 – backend
@@ -168,25 +187,34 @@ docker run -p 3000:3000 --name seq-frontend sequence-matching-frontend
 
 # Deploying the Backend so the GitHub Pages Frontend Can Use It
 
-The frontend is hosted on **GitHub Pages** (HTTPS). Because browsers block mixed content, the backend **must also be served over HTTPS** for the GitHub Pages frontend to connect to it.
+The frontend is hosted on **GitHub Pages** (HTTPS). Because browsers block mixed
+content, the backend **must also be served over HTTPS** for the GitHub Pages frontend
+to connect to it.
 
 ## Option 1 – Deploy to a Cloud Platform (recommended for production)
 
-The repository is pre-configured for [Railway](https://railway.app/) via `railway.toml` and `Dockerfile.backend`. Push the repository to Railway and it will automatically build and deploy the backend, providing a public `https://` URL.
+The repository is pre-configured for [Railway](https://railway.app/) via
+`railway.toml` and `Dockerfile.backend`. Push the repository to Railway and it will
+automatically build and deploy the backend, providing a public `https://` URL.
 
 1. Create a Railway project and link this repository.
 2. Railway will detect `railway.toml` and build the backend image.
 3. Copy the deployment URL (e.g. `https://your-app.up.railway.app`).
-4. Update the URL constants in the frontend source files:
-   - `src/WebSocketApi.ts` → set `WS_REACT_APP_BACKEND_URL_DEV` to `wss://your-app.up.railway.app`
-   - `src/components/VerticalStepperComponent.tsx` → set `REACT_APP_BACKEND_URL_DEV` to `https://your-app.up.railway.app`
-5. Commit and push; the GitHub Actions workflow will redeploy the frontend to GitHub Pages.
+4. Update `.env` values:
+   - `REACT_APP_BACKEND_URL=https://your-app.up.railway.app`
+   - `REACT_APP_FRONTEND_URL=https://your-frontend-domain`
+   - `FRONT_END_URL=https://your-frontend-domain`
+5. Commit and push; then redeploy frontend/backend so both sides pick up the new
+   environment values.
 
-Other platforms that work with `Dockerfile.backend` include [Render](https://render.com/), [Fly.io](https://fly.io/), and any VPS running Docker.
+Other platforms that work with `Dockerfile.backend` include
+[Render](https://render.com/), [Fly.io](https://fly.io/), and any VPS running Docker.
 
 ## Option 2 – Expose a Local Docker Container with ngrok (for temporary / testing use)
 
-If you want to test the GitHub Pages frontend against a backend running on your local machine, you can use [ngrok](https://ngrok.com/) to create a secure public HTTPS tunnel.
+If you want to test the GitHub Pages frontend against a backend running on your local
+machine, you can use [ngrok](https://ngrok.com/) to create a secure public HTTPS
+tunnel.
 
 ### Prerequisites
 
@@ -195,24 +223,31 @@ Install ngrok: https://ngrok.com/download
 ### Steps
 
 1. Start the backend container (see the Docker section above):
+
    ```bash
    docker run -p 8000:8000 sequence-matching-backend
    ```
 
 2. In a second terminal, start an ngrok tunnel to port 8000:
+
    ```bash
    ngrok http 8000
    ```
 
-3. ngrok will print a public URL such as `https://<your-ngrok-subdomain>.ngrok-free.app`. Copy it.
+3. ngrok will print a public URL such as
+   `https://<your-ngrok-subdomain>.ngrok-free.app`. Copy it.
 
-4. Update the frontend URL constants so the browser connects to your tunnel (replace `<your-ngrok-subdomain>` with the value from step 3):
-   - `src/WebSocketApi.ts` → `wss://<your-ngrok-subdomain>.ngrok-free.app`
-   - `src/components/VerticalStepperComponent.tsx` → `https://<your-ngrok-subdomain>.ngrok-free.app`
+4. Update `.env` so the browser connects to your tunnel (replace
+   `<your-ngrok-subdomain>` with the value from step 3):
+   - `REACT_APP_BACKEND_URL=https://<your-ngrok-subdomain>.ngrok-free.app`
+   - `REACT_APP_FRONTEND_URL=http://localhost:3000` (or your deployed frontend URL)
+   - `FRONT_END_URL=http://localhost:3000` (or your deployed frontend URL)
 
-5. Rebuild and redeploy the frontend, or run `npm start` locally and open the app in your browser.
+5. Rebuild and redeploy the frontend, or run `npm start` locally and open the app in
+   your browser.
 
-> **Note**: The free ngrok URL changes every time you restart the tunnel. For a stable URL, use a paid ngrok plan or deploy to a cloud platform (Option 1).
+> **Note**: The free ngrok URL changes every time you restart the tunnel. For a
+> stable URL, use a paid ngrok plan or deploy to a cloud platform (Option 1).
 
 ## Option 3 – Self-host on a VPS or Server
 
@@ -227,35 +262,42 @@ Install ngrok: https://ngrok.com/download
    ```bash
    docker run -d -p 8000:8000 --name seq-backend --restart unless-stopped sequence-matching-backend
    ```
-4. Set up a reverse proxy (e.g. [nginx](https://nginx.org/) or [Caddy](https://caddyserver.com/)) with an SSL certificate (e.g. from [Let's Encrypt](https://letsencrypt.org/)) so the backend is reachable as `https://your-domain.com`.
-5. Update the frontend URL constants and redeploy.
+4. Set up a reverse proxy (e.g. [nginx](https://nginx.org/) or
+   [Caddy](https://caddyserver.com/)) with an SSL certificate (e.g. from
+   [Let's Encrypt](https://letsencrypt.org/)) so the backend is reachable as
+   `https://your-domain.com`.
+5. Update `.env` URL values and redeploy.
 
 ---
 
 # GitHub Pages Deployment
 
-The frontend is automatically deployed to GitHub Pages when changes are pushed to the `master` branch. The workflow is defined in `.github/workflows/ci-cd-gh-pages.yml` and performs the following steps:
+The frontend is automatically deployed to GitHub Pages when changes are pushed to the
+`master` branch. The workflow is defined in `.github/workflows/ci-cd-gh-pages.yml`
+and performs the following steps:
 
 1. Installs dependencies with `pnpm`.
 2. Runs TypeScript type checking.
 3. Builds the production bundle (`pnpm run build`).
 4. Deploys the `dist/` folder to GitHub Pages.
 
-The live frontend URL is shown in the repository's **Environments** section on GitHub.
+The live frontend URL is shown in the repository's **Environments** section on
+GitHub.
 
 ---
 
 # Configuration
 
-| Location | Constant | Default value | Description |
-|----------|----------|---------------|-------------|
-| `src/WebSocketApi.ts` | `WS_REACT_APP_BACKEND_URL_DEV` | `wss://wiz-app-production.up.railway.app` | WebSocket base URL used by the frontend |
-| `src/components/VerticalStepperComponent.tsx` | `REACT_APP_BACKEND_URL_DEV` | `https://wiz-app-production.up.railway.app` | HTTP base URL used for downloading results |
-| `src/server/app.py` | `FRONT_END_URL` | `https://wiz-app.up.railway.app` | Frontend origin added to the backend CORS allow-list |
+| Location             | Variable / Export                               | Default value                               | Description                                      |
+| -------------------- | ----------------------------------------------- | ------------------------------------------- | ------------------------------------------------ |
+| `.env`               | `REACT_APP_BACKEND_URL`                         | `https://wiz-app-production.up.railway.app` | Single backend base URL used by the frontend     |
+| `src/config/urls.ts` | `BACKEND_URL`, `BACKEND_WS_URL`, `FRONTEND_URL` | derived from `.env`                         | Frontend URL exports consumed across the app     |
+| `.env`               | `FRONT_END_URL`                                 | `https://wiz-app.up.railway.app`            | Frontend origin added to backend CORS allow-list |
 
-When deploying to a new environment, update all three values so the frontend and backend can communicate.
+When deploying to a new environment, update `.env` values in one place.
 
 ---
 
 # TODOs
+
 - [ ] provide the .gist with the credentials
